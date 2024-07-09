@@ -1,0 +1,30 @@
+class Solution {
+    long sum = 0;
+    public long maximumScoreAfterOperations(int[][] edges, int[] values) {
+        Set<Integer>[] nbs = new Set[values.length];
+        sum = 0;
+        for (int i=0; i<values.length; i++) {
+            nbs[i] = new HashSet<>();
+            sum += (long)values[i];
+        }
+        for (int i=0; i<edges.length; i++) {
+            nbs[edges[i][0]].add(edges[i][1]);
+            nbs[edges[i][1]].add(edges[i][0]);
+        }
+        long minSum = dfs(0, -1, nbs, values);
+        return sum - minSum;
+    }
+
+    private long dfs(int root, int parent, Set<Integer>[] nbs, int[] values) {
+        if (nbs[root].size() == 1 && root != 0) {
+            return (long)values[root];
+        }
+        long minSum = 0;
+        for (int child: nbs[root]) {
+            if (child == parent) continue;
+            minSum += dfs(child, root, nbs, values);
+            if (minSum >= values[root]) return values[root];
+        }
+        return minSum;
+    }
+}
